@@ -1,0 +1,139 @@
+# oblique.cards
+#
+# One card per line. Blank lines and lines starting with # are ignored,
+# so you can use # freely to leave notes or group the deck into sections.
+#
+# To add a card:    add a line.
+# To remove a card: delete its line.
+# Then commit and let the deploy publish it. You never touch the app to do this.
+#
+# Shared links use a card's position in the deck (oblique.cards/?n=7).
+# Comments and blank lines do not count towards that position, only real cards do.
+# Append new cards at the end so existing shared links keep pointing at the
+# same card. Reordering or deleting earlier lines will shift every link after it.
+
+# --- carried over ---
+Ask the question the work is avoiding.
+Whose permission are you waiting for?
+What is the honest version you're embarrassed by?
+Which part are you protecting, and why?
+Name the thing you keep not deciding.
+What are you pretending not to know?
+Assume you're wrong and proceed anyway.
+Do the opposite and see who complains.
+Choose the option with the better story.
+What would this look like if it were easy?
+Make the decision a coin could make.
+Find the one part that scares you and enlarge it.
+Stop before you're finished.
+Do less, but finish.
+Say the quiet objection out loud.
+Find where you are being polite, and stop.
+Honour the constraint you resent most.
+Reverse the thing you assumed was fixed.
+Keep the draft. Throw away the plan.
+Say it once, then delete the explanation.
+What if the flaw is the feature?
+Ask the work what it wants to be.
+Whose voice is that? Turn it down.
+Do it badly and quickly, then look again.
+Give it a deadline of ten minutes.
+The obstacle is the shape of the answer.
+What would the lazy version be? Try it.
+
+# --- wanting ---
+What did you want before you were told to want it?
+Whose career are you copying, and are they happy?
+What are you calling realistic so you do not have to want more?
+You are allowed to want something you have no proof you can do.
+What are you postponing until you feel qualified to want it?
+What would you attempt if this did not have to define you?
+
+# --- staying or leaving ---
+Would you take this job again today?
+What are you staying for? Is it still there?
+You are not trapped. You are choosing.
+Picture five years of exactly this.
+Leaving is not the risk. Staying might be.
+Staying is a decision. You just have not made it out loud.
+What are you owed here that you will never be paid?
+The door you think is locked. Have you tried it?
+Quit the part, not the whole.
+
+# --- the job hunt, and the no ---
+Apply for the one you are not ready for.
+A no tells you where they end, not where you do.
+Stop shrinking yourself to fit the role.
+Send it before you are ready. Ready is a story.
+What are you auditioning for that you do not even want?
+Who are you when no one is hiring?
+
+# --- after the role goes ---
+Who are you on the days you make nothing?
+The title was theirs. What is yours?
+What did the job let you avoid?
+Grieve it, then rob it for parts.
+The structure is gone. What were you only doing because of it?
+What part of you got smaller to fit the job?
+
+# --- reinvention ---
+The expertise you are proud of might be the cage.
+What are you too senior to try? Try it.
+What would the beginner in you try that you now refuse?
+Notice what you would do for free.
+Who told you this was the only way up?
+
+# --- the inner critic ---
+Everyone competent feels like this.
+Whose standard are you failing? Did you agree to it?
+Behind whose schedule?
+What if they hired you on purpose?
+
+# --- deciding ---
+You already know. Stop collecting opinions.
+Both roads are fine. The waiting is the cost.
+You are treating a reversible choice as permanent.
+You are researching to avoid deciding.
+Your list of pros and cons already knows the answer.
+The thing you keep calling bad timing is the decision.
+You keep asking how. The real question is whether.
+
+# --- overwork and boundaries ---
+What are you proving, and to whom?
+Whose emergency is this?
+Busy is a hiding place.
+Say no to the good thing.
+What falls apart when you leave on time?
+What would you drop if no one noticed for a month?
+Write the resignation you will never send.
+
+# --- money against meaning ---
+Enough is a number. Name it.
+What is the salary actually for?
+What would you do for half the money and twice the meaning?
+Name the price of the thing you say money cannot buy.
+Say the number out loud.
+
+# --- ambition against contentment ---
+Whose finish line are you running towards?
+You are climbing well. Is it the right wall?
+More was the plan. Is it still the point?
+What if you already arrived, and forgot to notice?
+Picture being content. Notice the flinch.
+
+# --- work as identity ---
+What is left when the work is taken away?
+Who would you be with nothing to show for it?
+What did you love before it became a career?
+If the work disappeared, who would still know you?
+Name the job you are actually doing, not the one on the contract.
+
+# --- the general stuckness ---
+Who benefits from you believing you have no options?
+What are you being loyal to that is not loyal to you?
+You stopped noticing what you tolerate.
+You would never let a friend accept this.
+Stop asking if you can. Ask if you want to.
+Comfortable is also a decision.
+Assume they already said no.
+What are you waiting to be given that you could take?

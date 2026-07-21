@@ -1,0 +1,5 @@
+.git
+node_modules
+*.md
+deck-v1.md
+deck-v2.md

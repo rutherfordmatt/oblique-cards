@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oblique &middot; a card for when you're stuck</title>
+<meta name="description" content="Draw a card. Prompts for when the work has stalled and you need a nudge sideways." />
+<link rel="canonical" href="https://oblique.cards/" />
+
+<!-- Analytics: cookieless, optional, off until you fill one in.
+     Self-hosted Plausible:
+       <script defer data-domain="oblique.cards" src="https://YOUR-PLAUSIBLE-HOST/js/script.js"></script>
+     Self-hosted Umami:
+       <script defer src="https://YOUR-UMAMI-HOST/script.js" data-website-id="YOUR-WEBSITE-ID"></script>
+     Cloudflare Web Analytics:
+       <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR-TOKEN"}'></script>
+-->
+
+<meta name="theme-color" content="#fdfcf8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)" />
+
+<!-- Inline SVG favicon: the little card stack, matching the wordmark chip -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%230f0f0e'/%3E%3Cg fill='none' stroke='%23fdfcf8' stroke-width='1.5' stroke-linejoin='round'%3E%3Crect x='7.5' y='4.5' width='11' height='15' rx='1.6' transform='rotate(11 13 12)'/%3E%3Crect x='5.5' y='4.5' width='11' height='15' rx='1.6' transform='rotate(-11 11 12)' fill='%230f0f0e'/%3E%3C/g%3E%3C/svg%3E" />
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Oblique" />
+<meta property="og:title" content="Oblique &middot; a card for when you're stuck" />
+<meta property="og:description" content="Draw a card. Prompts for when the work has stalled and you need a nudge sideways." />
+<meta property="og:url" content="https://oblique.cards/" />
+<meta property="og:image" content="https://oblique.cards/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Oblique &middot; a card for when you're stuck" />
+<meta name="twitter:description" content="Draw a card. Prompts for when the work has stalled and you need a nudge sideways." />
+<meta name="twitter:image" content="https://oblique.cards/og.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #fdfcf8;
+    --ink: #0f0f0e;
+    --muted: oklch(55.1% .027 264.364);
+    --faint: oklch(70.7% .022 261.325);
+    --ghost: oklch(92.8% .006 264.531);
+    --rule: oklch(87.2% .01 258.338);
+    --chip-bg: #0f0f0e;
+    --chip-ink: #fdfcf8;
+    --pop-bg: #fdfcf8;
+    --serif: "Crimson Pro", Georgia, "Times New Roman", serif;
+    --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  }
+  html[data-theme="dark"] {
+    --ground: #0f0f0e;
+    --ink: #e5e5e5;
+    --muted: oklch(70.7% .022 261.325);
+    --faint: oklch(55.1% .027 264.364);
+    --ghost: oklch(37.3% .034 259.733);
+    --rule: oklch(37.3% .034 259.733);
+    --chip-bg: #e5e5e5;
+    --chip-ink: #0f0f0e;
+    --pop-bg: #1a1a1a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  ::selection { background-color: #e2e2d1; }
+  html[data-theme="dark"] ::selection { background-color: #3d3d3d; }
+  html, body { height: 100%; }
+
+  body {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; flex-direction: column;
+    background-color: var(--ground); color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  /* Header */
+  header { display: flex; align-items: center; justify-content: space-between; padding: 1.75rem 2rem; gap: 1rem; }
+  @media (min-width: 48rem) { header { padding: 2rem 2.5rem; } }
+  .brand { display: flex; align-items: center; gap: 0.7rem; }
+  .chip {
+    width: 2.25rem; height: 2.25rem; border-radius: 0.45rem;
+    background-color: var(--chip-bg); color: var(--chip-ink);
+    display: grid; place-items: center; flex-shrink: 0;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+  .chip svg { width: 1.2rem; height: 1.2rem; }
+  .brand-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 1.2rem; color: var(--ink); letter-spacing: 0.01em; }
+  .brand-name .tld { color: var(--faint); transition: color 0.4s ease; }
+
+  .controls { display: flex; align-items: center; gap: 1.25rem; }
+  .icon-btn, .text-btn {
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    font-family: var(--sans); display: inline-flex; align-items: center; transition: color 0.2s ease;
+  }
+  .icon-btn { padding: 0.25rem; }
+  .icon-btn svg { width: 1.15rem; height: 1.15rem; }
+  .icon-btn:hover, .text-btn:hover { color: var(--ink); }
+  .text-btn { gap: 0.55rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
+  .text-btn svg { width: 0.95rem; height: 0.95rem; transition: transform 0.5s cubic-bezier(.4,0,.2,1); }
+  .text-btn:hover svg { transform: rotate(-180deg); }
+  .next-label { display: none; }
+  @media (min-width: 34rem) { .next-label { display: inline; } }
+  .icon-btn:focus-visible, .text-btn:focus-visible, .link-btn:focus-visible { outline: 2px solid var(--faint); outline-offset: 4px; border-radius: 3px; }
+
+  /* Stage */
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem 1.5rem 3rem; cursor: pointer; }
+  .plate { max-width: 46rem; width: 100%; text-align: center; transition: opacity 0.35s ease, transform 0.35s ease; }
+  .plate.out { opacity: 0; transform: translateY(0.5rem); }
+  .plate.loading { opacity: 0; }
+
+  .mark { font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 6vw, 4.25rem); line-height: 1; color: var(--ghost); margin-bottom: 1.25rem; user-select: none; transition: color 0.4s ease; }
+  .strategy { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; transition: color 0.4s ease; }
+  .rule { width: 2.5rem; height: 1px; background-color: var(--rule); margin: 2rem auto; transition: background-color 0.4s ease; }
+  .count { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); font-variant-numeric: tabular-nums; transition: color 0.4s ease; }
+
+  /* Card actions (share / add) */
+  .actions { position: relative; margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+  .link-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); transition: color 0.2s ease; padding: 0.2rem 0; }
+  .link-btn:hover { color: var(--ink); }
+  .dot { color: var(--ghost); font-size: 0.7rem; }
+
+  /* Share popover */
+  .popover {
+    position: absolute; bottom: calc(100% + 0.75rem); left: 50%; transform: translateX(-50%) translateY(0.4rem);
+    background: var(--pop-bg); border: 1px solid var(--rule); border-radius: 0.6rem;
+    padding: 0.4rem; min-width: 11rem; box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+    display: flex; flex-direction: column; gap: 0.1rem; z-index: 20;
+    opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  }
+  .popover.open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+  .popover button {
+    display: flex; align-items: center; gap: 0.6rem; width: 100%; text-align: left;
+    background: none; border: none; cursor: pointer; border-radius: 0.35rem;
+    padding: 0.55rem 0.7rem; font-family: var(--sans); font-size: 0.82rem; color: var(--ink);
+    transition: background-color 0.15s ease;
+  }
+  .popover button:hover { background-color: color-mix(in oklab, var(--ink) 7%, transparent); }
+  .popover svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--muted); }
+
+  /* Compose */
+  .compose { display: none; max-width: 40rem; margin: 0 auto; }
+  .compose.on { display: block; }
+  .compose textarea {
+    width: 100%; resize: none; background: transparent; border: none; outline: none;
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: clamp(1.6rem, 3.6vw, 2.25rem); line-height: 1.2; letter-spacing: -0.02em;
+    color: var(--ink); text-align: center; overflow: hidden;
+  }
+  .compose textarea::placeholder { color: var(--ghost); }
+  .compose-actions { margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 1.25rem; }
+  .compose-note { margin-top: 1.25rem; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ghost); }
+
+  /* Footer colophon */
+  footer { padding: 1.5rem; text-align: center; font-size: 0.72rem; line-height: 1.9; letter-spacing: 0.02em; color: var(--faint); transition: color 0.4s ease; }
+  footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; transition: color 0.2s ease, border-color 0.2s ease; }
+  footer a:hover { color: var(--ink); border-color: var(--muted); }
+
+  /* Toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 2.25rem; transform: translateX(-50%) translateY(0.6rem);
+    background: var(--ink); color: var(--ground); font-size: 0.78rem; letter-spacing: 0.02em;
+    padding: 0.6rem 1rem; border-radius: 0.5rem; opacity: 0; pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease; z-index: 40;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .plate, .text-btn svg, body, .mark, .strategy, .rule, .count, footer, .chip, .popover, .toast, .link-btn, .brand-name .tld { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="chip" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="7.5" y="4.5" width="11" height="15" rx="1.6" transform="rotate(11 13 12)" />
+          <rect x="5.5" y="4.5" width="11" height="15" rx="1.6" transform="rotate(-11 11 12)" fill="var(--chip-bg)" />
+        </svg>
+      </span>
+      <span class="brand-name">Oblique<span class="tld">.cards</span></span>
+    </div>
+
+    <div class="controls">
+      <button class="icon-btn" id="theme" type="button" aria-label="Switch to dark mode" aria-pressed="false">
+        <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+      </button>
+      <button class="text-btn" id="draw" type="button" aria-label="Draw the next card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 0 1 15.5-6.2L21 8" /><path d="M21 3v5h-5" />
+          <path d="M21 12a9 9 0 0 1-15.5 6.2L3 16" /><path d="M3 21v-5h5" />
+        </svg>
+        <span class="next-label">Next card</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="stage">
+    <div class="plate loading" id="plate">
+      <!-- Card view -->
+      <div id="view">
+        <div class="mark" aria-hidden="true">&#8221;</div>
+        <p class="strategy" id="strategy" aria-live="polite" role="status"></p>
+        <div class="rule" aria-hidden="true"></div>
+        <p class="count" id="count"></p>
+        <div class="actions">
+          <button class="link-btn" id="share" type="button" aria-haspopup="menu" aria-expanded="false">Share</button>
+          <span class="dot" aria-hidden="true">&middot;</span>
+          <button class="link-btn" id="add" type="button">Add a card</button>
+
+          <div class="popover" id="popover" role="menu" aria-label="Share this card">
+            <button id="copy" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              Copy card and link
+            </button>
+            <button id="share-x" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22l-7.5 8.6L23 22h-6.8l-5-6.6L5.4 22H2.3l8-9.2L1.5 2h6.9l4.6 6.1L18.9 2Zm-1.2 18h1.7L7.3 3.8H5.5L17.7 20Z"/></svg>
+              Post to X
+            </button>
+            <button id="share-bsky" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 10.8C10.9 8.6 7.9 4.6 5.1 3 2.4 1.5 1.4 2 .8 2.4.1 2.9 0 3.9 0 4.5c0 .6.3 4.8.5 5.5.7 2.3 3.1 3 5.3 2.8-3.3.5-6.2 1.7-2.4 5.9 4.2 4.3 5.7-2.2 6.6-4.6.9 2.4 2.4 8.9 6.6 4.6 3.8-4.2.9-5.4-2.4-5.9 2.2.2 4.6-.5 5.3-2.8.2-.7.5-4.9.5-5.5 0-.6-.1-1.6-.8-2.1-.6-.4-1.6-.9-4.3.6-2.8 1.6-5.8 5.6-6.9 7.8Z"/></svg>
+              Post to Bluesky
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compose view -->
+      <div class="compose" id="compose">
+        <div class="mark" aria-hidden="true">&#43;</div>
+        <textarea id="composeInput" rows="1" maxlength="160" placeholder="Write a strategy&hellip;" aria-label="Write a new strategy"></textarea>
+        <div class="compose-actions">
+          <button class="link-btn" id="save" type="button">Save to your deck</button>
+          <span class="dot" aria-hidden="true">&middot;</span>
+          <button class="link-btn" id="cancel" type="button">Cancel</button>
+        </div>
+        <p class="compose-note">Saved on this device only</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    Inspired by Brian Eno and Peter Schmidt<br>
+    Built with love by <a href="https://mattrutherford.co.uk" target="_blank" rel="noopener">Matt Rutherford</a>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+        /* =========================================================================
+       THE DECK lives in cards.txt, one card per line, fetched at load.
+       To edit the public deck: open cards.txt, add or remove lines, commit,
+       and redeploy. You never need to touch this file to change the cards.
+
+       FALLBACK is only used if cards.txt cannot be fetched (for example when
+       opening this file straight from disk). It stops the site ever looking
+       broken. It is not the real deck.
+       ========================================================================= */
+    const FALLBACK = [
+      "Ask the question the work is avoiding.",
+      "Whose permission are you waiting for?",
+      "Name the thing you keep not deciding.",
+      "What are you pretending not to know?",
+      "Make the decision a coin could make.",
+      "Stop before you're finished.",
+      "The obstacle is the shape of the answer.",
+      "You already know. Stop collecting opinions."
+    ];
+    let CANON = FALLBACK.slice();
+
+    const SITE = location.protocol.startsWith("http") ? location.origin : "https://oblique.cards";
+    const LS = { theme: "oblique.theme", cards: "oblique.personal" };
+    const store = {
+      get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+      set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+    };
+
+    // Personal cards (this browser only)
+    let personal = [];
+    try { personal = JSON.parse(store.get(LS.cards) || "[]"); if(!Array.isArray(personal)) personal = []; } catch(e){ personal = []; }
+    const savePersonal = () => store.set(LS.cards, JSON.stringify(personal));
+
+    const deckLen = () => CANON.length + personal.length;
+    const isPersonal = (i) => i >= CANON.length;
+    const textOf = (i) => i < CANON.length ? CANON[i] : personal[i - CANON.length];
+
+    // Elements
+    const el = (id) => document.getElementById(id);
+    const strategyEl = el("strategy"), countEl = el("count"), plateEl = el("plate");
+    const viewEl = el("view"), composeEl = el("compose"), inputEl = el("composeInput");
+    const stageEl = el("stage"), drawBtn = el("draw"), themeBtn = el("theme"), themeIcon = el("theme-icon");
+    const shareBtn = el("share"), addBtn = el("add"), popover = el("popover"), toastEl = el("toast");
+    const root = document.documentElement;
+    const pad = (n) => String(n).padStart(2, "0");
+
+    // ---- Theme (persisted) ----
+    const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />';
+    const SUN = '<circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />';
+    function setTheme(mode, persist){
+      root.setAttribute("data-theme", mode);
+      const dark = mode === "dark";
+      themeIcon.innerHTML = dark ? SUN : MOON;
+      themeBtn.setAttribute("aria-pressed", String(dark));
+      themeBtn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+      if (persist) store.set(LS.theme, mode);
+    }
+    const savedTheme = store.get(LS.theme);
+    setTheme(savedTheme || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"), false);
+    themeBtn.addEventListener("click", (e) => { e.stopPropagation(); setTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark", true); });
+
+    // ---- Draw logic: shuffled bag over the whole deck ----
+    let bag = [], current = 0;
+    function refill(exclude){
+      const n = deckLen();
+      bag = Array.from({length:n}, (_,i)=>i);
+      for (let i = bag.length-1; i>0; i--){ const j = Math.floor(Math.random()*(i+1)); [bag[i],bag[j]]=[bag[j],bag[i]]; }
+      if (exclude != null && bag[bag.length-1] === exclude && bag.length > 1){ [bag[bag.length-1],bag[0]]=[bag[0],bag[bag.length-1]]; }
+    }
+
+    function render(index){
+      current = index;
+      strategyEl.textContent = textOf(index);
+      if (isPersonal(index)){
+        countEl.textContent = "A card you added";
+        try { history.replaceState(null, "", location.pathname); } catch(e){}
+      } else {
+        countEl.innerHTML = "&#8470; " + pad(index+1) + " &middot; of " + CANON.length;
+        try { history.replaceState(null, "", "?n=" + (index+1)); } catch(e){}
+      }
+    }
+
+    function draw(){
+      closePopover();
+      if (bag.length === 0) refill(current);
+      const next = bag.pop();
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce){ render(next); return; }
+      plateEl.classList.add("out");
+      setTimeout(() => { render(next); void plateEl.offsetWidth; plateEl.classList.remove("out"); }, 350);
+    }
+
+    // ---- Toast ----
+    let toastTimer;
+    function toast(msg){
+      toastEl.textContent = msg; toastEl.classList.add("show");
+      clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove("show"), 1900);
+    }
+
+    // ---- Share ----
+    function sharePayload(){
+      const text = textOf(current);
+      const url = isPersonal(current) ? SITE + "/" : SITE + "/?n=" + (current+1);
+      return { text, url, combined: "\u201C" + text + "\u201D\n\n" + url };
+    }
+    function openPopover(){ popover.classList.add("open"); shareBtn.setAttribute("aria-expanded","true"); }
+    function closePopover(){ popover.classList.remove("open"); shareBtn.setAttribute("aria-expanded","false"); }
+
+    shareBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const { text, url, combined } = sharePayload();
+      if (navigator.share){
+        try { await navigator.share({ title: "Oblique", text: "\u201C" + text + "\u201D", url }); }
+        catch(err){ /* user cancelled */ }
+        return;
+      }
+      popover.classList.contains("open") ? closePopover() : openPopover();
+    });
+    el("copy").addEventListener("click", async (e) => {
+      e.stopPropagation();
+      try { await navigator.clipboard.writeText(sharePayload().combined); toast("Copied to clipboard"); }
+      catch(err){ toast("Could not copy"); }
+      closePopover();
+    });
+    el("share-x").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const { combined } = sharePayload();
+      window.open("https://x.com/intent/post?text=" + encodeURIComponent(combined), "_blank", "noopener");
+      closePopover();
+    });
+    el("share-bsky").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const { combined } = sharePayload();
+      window.open("https://bsky.app/intent/compose?text=" + encodeURIComponent(combined), "_blank", "noopener");
+      closePopover();
+    });
+
+    // ---- Add your own ----
+    function autosize(){ inputEl.style.height = "auto"; inputEl.style.height = inputEl.scrollHeight + "px"; }
+    function openCompose(){
+      closePopover();
+      viewEl.style.display = "none"; composeEl.classList.add("on");
+      inputEl.value = ""; autosize(); inputEl.focus();
+    }
+    function closeCompose(){ composeEl.classList.remove("on"); viewEl.style.display = ""; }
+    addBtn.addEventListener("click", (e) => { e.stopPropagation(); openCompose(); });
+    el("cancel").addEventListener("click", (e) => { e.stopPropagation(); closeCompose(); });
+    inputEl.addEventListener("input", autosize);
+    inputEl.addEventListener("click", (e) => e.stopPropagation());
+    function saveCard(){
+      const val = inputEl.value.trim();
+      if (!val){ inputEl.focus(); return; }
+      personal.push(val); savePersonal();
+      closeCompose(); refill(current); render(deckLen() - 1);
+      toast("Added to your deck");
+    }
+    el("save").addEventListener("click", (e) => { e.stopPropagation(); saveCard(); });
+
+    // ---- Global interactions ----
+    stageEl.addEventListener("click", () => { if (!composeEl.classList.contains("on")) draw(); });
+    drawBtn.addEventListener("click", (e) => { e.stopPropagation(); draw(); });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".actions")) closePopover(); });
+    document.addEventListener("keydown", (e) => {
+      const tag = document.activeElement && document.activeElement.tagName;
+      if (e.key === "Escape"){ closePopover(); if (composeEl.classList.contains("on")) closeCompose(); return; }
+      if ((e.key === "Enter" && (e.metaKey || e.ctrlKey)) && composeEl.classList.contains("on")){ saveCard(); return; }
+      if (tag === "TEXTAREA" || tag === "INPUT" || tag === "BUTTON") return;
+      if (e.key === " " || e.key === "Enter"){ e.preventDefault(); draw(); }
+    });
+
+    // ---- Load the deck from cards.txt, then start ----
+    function parseDeck(text){
+      return text.split(/\r?\n/).map(l => l.trim()).filter(l => l && l[0] !== "#");
+    }
+    function start(){
+      refill();
+      const requested = parseInt(new URLSearchParams(location.search).get("n"), 10);
+      if (Number.isInteger(requested) && requested >= 1 && requested <= CANON.length) render(requested - 1);
+      else render(bag.pop());
+      requestAnimationFrame(() => plateEl.classList.remove("loading"));
+    }
+    (async () => {
+      try {
+        const res = await fetch("cards.txt", { cache: "no-cache" });
+        if (res.ok){
+          const cards = parseDeck(await res.text());
+          if (cards.length) CANON = cards;
+        }
+      } catch(e){ /* keep FALLBACK, site still works */ }
+      start();
+    })();
+  </script>
+</body>
+</html>
