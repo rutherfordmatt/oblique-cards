@@ -127,20 +127,19 @@
   .mark { font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 6vw, 4.25rem); line-height: 1; color: var(--ghost); margin-bottom: 1.25rem; user-select: none; transition: color 0.4s ease; }
   .strategy { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(2rem, 4.8vw, 3.2rem); line-height: 1.16; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; transition: color 0.4s ease; }
   .rule { width: 2.5rem; height: 1px; background-color: color-mix(in oklab, var(--accent) 55%, transparent); margin: 2rem auto; transition: background-color 0.4s ease; }
-  .count { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); font-variant-numeric: tabular-nums; transition: color 0.4s ease; }
 
-  /* Card actions (share / add) */
+  /* Card actions (share) */
   .actions { position: relative; margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
   .link-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); transition: color 0.2s ease; padding: 0.2rem 0; }
   .link-btn:hover { color: var(--accent); }
-  .dot { color: var(--ghost); font-size: 0.7rem; }
 
   /* Share popover */
   .popover {
     position: absolute; bottom: calc(100% + 0.75rem); left: 50%; transform: translateX(-50%) translateY(0.4rem);
     background: var(--pop-bg); border: 1px solid var(--rule); border-radius: 0.6rem;
-    padding: 0.4rem; min-width: 11rem; box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+    padding: 0.4rem; min-width: 12rem; box-shadow: 0 12px 30px rgba(0,0,0,0.10);
     display: flex; flex-direction: column; gap: 0.1rem; z-index: 20;
+    max-height: min(62vh, 32rem); overflow-y: auto;
     opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
   }
   .popover.open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%) translateY(0); }
@@ -152,19 +151,6 @@
   }
   .popover button:hover { background-color: color-mix(in oklab, var(--ink) 7%, transparent); }
   .popover svg { width: 1rem; height: 1rem; flex-shrink: 0; color: var(--muted); }
-
-  /* Compose */
-  .compose { display: none; max-width: 40rem; margin: 0 auto; }
-  .compose.on { display: block; }
-  .compose textarea {
-    width: 100%; resize: none; background: transparent; border: none; outline: none;
-    font-family: var(--serif); font-style: italic; font-weight: 400;
-    font-size: clamp(1.6rem, 3.6vw, 2.25rem); line-height: 1.2; letter-spacing: -0.02em;
-    color: var(--ink); text-align: center; overflow: hidden;
-  }
-  .compose textarea::placeholder { color: var(--ghost); }
-  .compose-actions { margin-top: 2rem; display: flex; align-items: center; justify-content: center; gap: 1.25rem; }
-  .compose-note { margin-top: 1.25rem; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ghost); }
 
   /* Footer colophon */
   footer { padding: 1.5rem; text-align: center; font-size: 0.72rem; line-height: 1.9; letter-spacing: 0.02em; color: var(--faint); transition: color 0.4s ease; }
@@ -181,7 +167,7 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @media (prefers-reduced-motion: reduce) {
-    .plate, .text-btn svg, body, .mark, .strategy, .rule, .count, footer, .chip, .popover, .toast, .link-btn, .brand-name .tld { transition: none; }
+    .plate, .text-btn svg, body, .mark, .strategy, .rule, footer, .chip, .popover, .toast, .link-btn, .brand-name .tld { transition: none; }
   }
 </style>
 </head>
@@ -194,7 +180,7 @@
           <rect x="5.5" y="4.5" width="11" height="15" rx="1.6" transform="rotate(-11 11 12)" fill="var(--chip-bg)" />
         </svg>
       </span>
-      <span class="brand-name">Oblique<span class="tld">.cards</span></span>
+      <span class="brand-name">oblique<span class="tld">.cards</span></span>
     </div>
 
     <div class="controls">
@@ -220,39 +206,32 @@
         <div class="mark" aria-hidden="true">&#8221;</div>
         <p class="strategy" id="strategy" aria-live="polite" role="status"></p>
         <div class="rule" aria-hidden="true"></div>
-        <p class="count" id="count"></p>
         <div class="actions">
           <button class="link-btn" id="share" type="button" aria-haspopup="menu" aria-expanded="false">Share</button>
-          <span class="dot" aria-hidden="true">&middot;</span>
-          <button class="link-btn" id="add" type="button">Add a card</button>
 
           <div class="popover" id="popover" role="menu" aria-label="Share this card">
-            <button id="copy" role="menuitem" type="button">
+            <button data-net="copy" role="menuitem" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
               Copy card and link
             </button>
-            <button id="share-x" role="menuitem" type="button">
-              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18.9 2H22l-7.5 8.6L23 22h-6.8l-5-6.6L5.4 22H2.3l8-9.2L1.5 2h6.9l4.6 6.1L18.9 2Zm-1.2 18h1.7L7.3 3.8H5.5L17.7 20Z"/></svg>
-              Post to X
+            <button data-net="threads" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M17.3 11.1c-.1 0-.2-.1-.3-.1-.2-3.2-1.9-5-4.8-5.1h-.1c-1.7 0-3.2.7-4 2l1.6 1.1c.7-1 1.7-1.2 2.4-1.2 1 0 1.7.3 2.2.9.3.4.5 1 .7 1.7-.9-.2-1.9-.2-2.9-.1-2.9.2-4.8 1.9-4.7 4.2.1 1.2.7 2.2 1.7 2.9.9.6 2 .8 3.2.8 1.6-.1 2.8-.7 3.7-1.8.7-.9 1.1-2 1.3-3.3.8.5 1.4 1.1 1.7 1.8.5 1.2.6 3.1-1 4.7-1.4 1.4-3.1 2-5.6 2-2.9 0-5-.9-6.5-2.6C4.4 17.1 3.7 15 3.7 12s.7-5.1 2.1-6.7C7.3 3.6 9.5 2.7 12.3 2.7c2.9 0 5.1.9 6.6 2.7.7.9 1.3 1.9 1.6 3.2l1.9-.5c-.4-1.6-1.1-2.9-2-4C18.6 1.8 15.9.7 12.4.7h-.1C8.8.7 6.1 1.9 4.3 4.2 2.6 6.3 1.7 9.2 1.7 12v.1c0 2.8.9 5.7 2.6 7.8 1.8 2.3 4.5 3.5 8 3.5h.1c3.1 0 5.3-.8 7.1-2.6 2.4-2.4 2.3-5.3 1.5-7.1-.6-1.3-1.7-2.3-3.2-3zm-5.1 5.1c-1.3.1-2.7-.5-2.8-1.8-.1-.9.6-2 2.8-2.1h.7c.7 0 1.4.1 2 .2-.2 2.9-1.6 3.6-2.7 3.7z"/></svg>
+              Post to Threads
             </button>
-            <button id="share-bsky" role="menuitem" type="button">
+            <button data-net="bsky" role="menuitem" type="button">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 10.8C10.9 8.6 7.9 4.6 5.1 3 2.4 1.5 1.4 2 .8 2.4.1 2.9 0 3.9 0 4.5c0 .6.3 4.8.5 5.5.7 2.3 3.1 3 5.3 2.8-3.3.5-6.2 1.7-2.4 5.9 4.2 4.3 5.7-2.2 6.6-4.6.9 2.4 2.4 8.9 6.6 4.6 3.8-4.2.9-5.4-2.4-5.9 2.2.2 4.6-.5 5.3-2.8.2-.7.5-4.9.5-5.5 0-.6-.1-1.6-.8-2.1-.6-.4-1.6-.9-4.3.6-2.8 1.6-5.8 5.6-6.9 7.8Z"/></svg>
               Post to Bluesky
             </button>
+            <button data-net="whatsapp" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M.1 24l1.7-6.2A11.9 11.9 0 0 1 .2 11.9C.2 5.3 5.5 0 12.1 0a11.8 11.8 0 0 1 8.4 3.5 11.8 11.8 0 0 1 3.5 8.4c0 6.6-5.4 11.9-11.9 11.9a12 12 0 0 1-5.7-1.4L.1 24zm6.6-3.8c1.7 1 3.3 1.6 5.4 1.6 5.5 0 9.9-4.4 9.9-9.9a9.9 9.9 0 0 0-9.9-9.9C6.6 2 2.2 6.4 2.2 11.9c0 2.2.6 3.8 1.7 5.6l-1 3.6 3.8-1zm11.4-5.8c-.1-.1-.3-.2-.6-.3-.3-.2-1.8-.9-2-1-.3-.1-.5-.2-.7.1-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4z"/></svg>
+              Send on WhatsApp
+            </button>
+            <button data-net="native" id="share-native" role="menuitem" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg>
+              More&hellip;
+            </button>
           </div>
         </div>
-      </div>
-
-      <!-- Compose view -->
-      <div class="compose" id="compose">
-        <div class="mark" aria-hidden="true">&#43;</div>
-        <textarea id="composeInput" rows="1" maxlength="160" placeholder="Write a strategy&hellip;" aria-label="Write a new strategy"></textarea>
-        <div class="compose-actions">
-          <button class="link-btn" id="save" type="button">Save to your deck</button>
-          <span class="dot" aria-hidden="true">&middot;</span>
-          <button class="link-btn" id="cancel" type="button">Cancel</button>
-        </div>
-        <p class="compose-note">Saved on this device only</p>
       </div>
     </div>
   </main>
@@ -287,29 +266,21 @@
     let CANON = FALLBACK.slice();
 
     const SITE = location.protocol.startsWith("http") ? location.origin : "https://oblique.cards";
-    const LS = { theme: "oblique.theme", cards: "oblique.personal" };
+    const LS = { theme: "oblique.theme" };
     const store = {
       get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
       set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
     };
 
-    // Personal cards (this browser only)
-    let personal = [];
-    try { personal = JSON.parse(store.get(LS.cards) || "[]"); if(!Array.isArray(personal)) personal = []; } catch(e){ personal = []; }
-    const savePersonal = () => store.set(LS.cards, JSON.stringify(personal));
-
-    const deckLen = () => CANON.length + personal.length;
-    const isPersonal = (i) => i >= CANON.length;
-    const textOf = (i) => i < CANON.length ? CANON[i] : personal[i - CANON.length];
+    const deckLen = () => CANON.length;
+    const textOf = (i) => CANON[i];
 
     // Elements
     const el = (id) => document.getElementById(id);
-    const strategyEl = el("strategy"), countEl = el("count"), plateEl = el("plate");
-    const viewEl = el("view"), composeEl = el("compose"), inputEl = el("composeInput");
+    const strategyEl = el("strategy"), plateEl = el("plate");
     const stageEl = el("stage"), drawBtn = el("draw"), themeBtn = el("theme"), themeIcon = el("theme-icon");
-    const shareBtn = el("share"), addBtn = el("add"), popover = el("popover"), toastEl = el("toast");
+    const shareBtn = el("share"), popover = el("popover"), toastEl = el("toast");
     const root = document.documentElement;
-    const pad = (n) => String(n).padStart(2, "0");
 
     // ---- Theme (persisted) ----
     const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />';
@@ -338,13 +309,9 @@
     function render(index){
       current = index;
       strategyEl.textContent = textOf(index);
-      if (isPersonal(index)){
-        countEl.textContent = "A card you added";
-        try { history.replaceState(null, "", location.pathname); } catch(e){}
-      } else {
-        countEl.innerHTML = "&#8470; " + pad(index+1) + " &middot; of " + CANON.length;
-        try { history.replaceState(null, "", "?n=" + (index+1)); } catch(e){}
-      }
+      // The card's number stays in the URL (for shareable /?n= links) but is
+      // deliberately not shown, to keep the deck feeling open rather than finite.
+      try { history.replaceState(null, "", "?n=" + (index+1)); } catch(e){}
     }
 
     function draw(){
@@ -365,72 +332,60 @@
     }
 
     // ---- Share ----
+    // The line that rides along with every shared card.
+    const TAGLINE = "An oblique suggestion for work or life";
     function sharePayload(){
       const text = textOf(current);
-      const url = isPersonal(current) ? SITE + "/" : SITE + "/?n=" + (current+1);
-      return { text, url, combined: "\u201C" + text + "\u201D\n\n" + url };
+      const url = SITE + "/?n=" + (current+1);
+      const message = "\u201C" + text + "\u201D\n\n" + TAGLINE;
+      return { text, message, url, combined: message + "\n\n" + url };
     }
     function openPopover(){ popover.classList.add("open"); shareBtn.setAttribute("aria-expanded","true"); }
     function closePopover(){ popover.classList.remove("open"); shareBtn.setAttribute("aria-expanded","false"); }
 
-    shareBtn.addEventListener("click", async (e) => {
+    // The custom popover is always the path. The native OS sheet is only
+    // offered as a "More..." item, and only where the API actually exists
+    // (phones, Safari), so desktop never gets the clunky system sheet.
+    shareBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      const { text, url, combined } = sharePayload();
-      if (navigator.share){
-        try { await navigator.share({ title: "Oblique", text: "\u201C" + text + "\u201D", url }); }
-        catch(err){ /* user cancelled */ }
-        return;
-      }
       popover.classList.contains("open") ? closePopover() : openPopover();
     });
-    el("copy").addEventListener("click", async (e) => {
-      e.stopPropagation();
-      try { await navigator.clipboard.writeText(sharePayload().combined); toast("Copied to clipboard"); }
-      catch(err){ toast("Could not copy"); }
-      closePopover();
-    });
-    el("share-x").addEventListener("click", (e) => {
-      e.stopPropagation();
-      const { combined } = sharePayload();
-      window.open("https://x.com/intent/post?text=" + encodeURIComponent(combined), "_blank", "noopener");
-      closePopover();
-    });
-    el("share-bsky").addEventListener("click", (e) => {
-      e.stopPropagation();
-      const { combined } = sharePayload();
-      window.open("https://bsky.app/intent/compose?text=" + encodeURIComponent(combined), "_blank", "noopener");
-      closePopover();
-    });
+    // Only surface the native sheet on touch devices (phones/tablets), where
+    // it is genuinely useful. Desktops, including macOS which also exposes
+    // navigator.share, never see it.
+    const isTouch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    if (!(navigator.share && isTouch)){ const n = el("share-native"); if (n) n.style.display = "none"; }
 
-    // ---- Add your own ----
-    function autosize(){ inputEl.style.height = "auto"; inputEl.style.height = inputEl.scrollHeight + "px"; }
-    function openCompose(){
-      closePopover();
-      viewEl.style.display = "none"; composeEl.classList.add("on");
-      inputEl.value = ""; autosize(); inputEl.focus();
-    }
-    function closeCompose(){ composeEl.classList.remove("on"); viewEl.style.display = ""; }
-    addBtn.addEventListener("click", (e) => { e.stopPropagation(); openCompose(); });
-    el("cancel").addEventListener("click", (e) => { e.stopPropagation(); closeCompose(); });
-    inputEl.addEventListener("input", autosize);
-    inputEl.addEventListener("click", (e) => e.stopPropagation());
-    function saveCard(){
-      const val = inputEl.value.trim();
-      if (!val){ inputEl.focus(); return; }
-      personal.push(val); savePersonal();
-      closeCompose(); refill(current); render(deckLen() - 1);
-      toast("Added to your deck");
-    }
-    el("save").addEventListener("click", (e) => { e.stopPropagation(); saveCard(); });
+    const openIntent = (u) => window.open(u, "_blank", "noopener");
+    const shareTargets = {
+      copy: async (p) => {
+        try { await navigator.clipboard.writeText(p.combined); toast("Copied to clipboard"); }
+        catch(err){ toast("Could not copy"); }
+      },
+      threads:  (p) => openIntent("https://www.threads.net/intent/post?text=" + encodeURIComponent(p.combined)),
+      bsky:     (p) => openIntent("https://bsky.app/intent/compose?text=" + encodeURIComponent(p.combined)),
+      whatsapp: (p) => openIntent("https://wa.me/?text=" + encodeURIComponent(p.combined)),
+      native: async (p) => {
+        try { await navigator.share({ title: "Oblique", text: p.message, url: p.url }); }
+        catch(err){ /* user cancelled */ }
+      }
+    };
+    popover.querySelectorAll("button[data-net]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const fn = shareTargets[btn.getAttribute("data-net")];
+        if (fn) fn(sharePayload());
+        closePopover();
+      });
+    });
 
     // ---- Global interactions ----
-    stageEl.addEventListener("click", () => { if (!composeEl.classList.contains("on")) draw(); });
+    stageEl.addEventListener("click", () => draw());
     drawBtn.addEventListener("click", (e) => { e.stopPropagation(); draw(); });
     document.addEventListener("click", (e) => { if (!e.target.closest(".actions")) closePopover(); });
     document.addEventListener("keydown", (e) => {
       const tag = document.activeElement && document.activeElement.tagName;
-      if (e.key === "Escape"){ closePopover(); if (composeEl.classList.contains("on")) closeCompose(); return; }
-      if ((e.key === "Enter" && (e.metaKey || e.ctrlKey)) && composeEl.classList.contains("on")){ saveCard(); return; }
+      if (e.key === "Escape"){ closePopover(); return; }
       if (tag === "TEXTAREA" || tag === "INPUT" || tag === "BUTTON") return;
       if (e.key === " " || e.key === "Enter"){ e.preventDefault(); draw(); }
     });
