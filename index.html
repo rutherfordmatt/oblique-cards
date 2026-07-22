@@ -16,7 +16,7 @@
        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR-TOKEN"}'></script>
 -->
 
-<meta name="theme-color" content="#fdfcf8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)" />
 
 <!-- Inline SVG favicon: the little card stack, matching the wordmark chip -->
@@ -36,36 +36,42 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ground: #fdfcf8;
-    --ink: #0f0f0e;
-    --muted: oklch(55.1% .027 264.364);
-    --faint: oklch(70.7% .022 261.325);
-    --ghost: oklch(92.8% .006 264.531);
-    --rule: oklch(87.2% .01 258.338);
-    --chip-bg: #0f0f0e;
-    --chip-ink: #fdfcf8;
-    --pop-bg: #fdfcf8;
-    --serif: "Crimson Pro", Georgia, "Times New Roman", serif;
+    --ground: #fafaf8;
+    --ink: #1a1a1a;
+    --muted: #686460;
+    --faint: #a8a099;
+    --ghost: #e2deda;
+    --rule: #e2deda;
+    --accent: #3a6b6b;
+    --accent-strong: #2b5050;
+    --accent-soft: #e6efef;
+    --chip-bg: #3a6b6b;
+    --chip-ink: #fafaf8;
+    --pop-bg: #fafaf8;
+    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
     --sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   }
   html[data-theme="dark"] {
     --ground: #0f0f0e;
-    --ink: #e5e5e5;
-    --muted: oklch(70.7% .022 261.325);
-    --faint: oklch(55.1% .027 264.364);
-    --ghost: oklch(37.3% .034 259.733);
-    --rule: oklch(37.3% .034 259.733);
-    --chip-bg: #e5e5e5;
+    --ink: #e8e6e2;
+    --muted: #a49c93;
+    --faint: #6b665f;
+    --ghost: #3a3733;
+    --rule: #3a3733;
+    --accent: #7fb3b3;
+    --accent-strong: #a7cfcf;
+    --accent-soft: #24403f;
+    --chip-bg: #7fb3b3;
     --chip-ink: #0f0f0e;
     --pop-bg: #1a1a1a;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  ::selection { background-color: #e2e2d1; }
-  html[data-theme="dark"] ::selection { background-color: #3d3d3d; }
+  ::selection { background-color: var(--accent-soft); }
+  html[data-theme="dark"] ::selection { background-color: var(--accent-soft); }
   html, body { height: 100%; }
 
   body {
@@ -80,16 +86,22 @@
   /* Header */
   header { display: flex; align-items: center; justify-content: space-between; padding: 1.75rem 2rem; gap: 1rem; }
   @media (min-width: 48rem) { header { padding: 2rem 2.5rem; } }
-  .brand { display: flex; align-items: center; gap: 0.7rem; }
+  .brand { display: flex; align-items: center; gap: 0.8rem; }
   .chip {
-    width: 2.25rem; height: 2.25rem; border-radius: 0.45rem;
+    width: 2.6rem; height: 2.6rem; border-radius: 0.55rem;
     background-color: var(--chip-bg); color: var(--chip-ink);
     display: grid; place-items: center; flex-shrink: 0;
     transition: background-color 0.4s ease, color 0.4s ease;
   }
-  .chip svg { width: 1.2rem; height: 1.2rem; }
-  .brand-name { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 1.2rem; color: var(--ink); letter-spacing: 0.01em; }
+  .chip svg { width: 1.4rem; height: 1.4rem; }
+  .brand-name { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 1.55rem; color: var(--ink); letter-spacing: 0.01em; }
   .brand-name .tld { color: var(--faint); transition: color 0.4s ease; }
+  @media (min-width: 48rem) {
+    .brand { gap: 0.9rem; }
+    .chip { width: 2.85rem; height: 2.85rem; }
+    .chip svg { width: 1.55rem; height: 1.55rem; }
+    .brand-name { font-size: 1.75rem; }
+  }
 
   .controls { display: flex; align-items: center; gap: 1.25rem; }
   .icon-btn, .text-btn {
@@ -98,13 +110,13 @@
   }
   .icon-btn { padding: 0.25rem; }
   .icon-btn svg { width: 1.15rem; height: 1.15rem; }
-  .icon-btn:hover, .text-btn:hover { color: var(--ink); }
+  .icon-btn:hover, .text-btn:hover { color: var(--accent); }
   .text-btn { gap: 0.55rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; }
   .text-btn svg { width: 0.95rem; height: 0.95rem; transition: transform 0.5s cubic-bezier(.4,0,.2,1); }
   .text-btn:hover svg { transform: rotate(-180deg); }
   .next-label { display: none; }
   @media (min-width: 34rem) { .next-label { display: inline; } }
-  .icon-btn:focus-visible, .text-btn:focus-visible, .link-btn:focus-visible { outline: 2px solid var(--faint); outline-offset: 4px; border-radius: 3px; }
+  .icon-btn:focus-visible, .text-btn:focus-visible, .link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
 
   /* Stage */
   main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem 1.5rem 3rem; cursor: pointer; }
@@ -113,14 +125,14 @@
   .plate.loading { opacity: 0; }
 
   .mark { font-family: var(--serif); font-weight: 600; font-size: clamp(3rem, 6vw, 4.25rem); line-height: 1; color: var(--ghost); margin-bottom: 1.25rem; user-select: none; transition: color 0.4s ease; }
-  .strategy { font-family: var(--serif); font-style: italic; font-weight: 400; font-size: clamp(1.9rem, 4.6vw, 3rem); line-height: 1.18; letter-spacing: -0.02em; color: var(--ink); text-wrap: balance; transition: color 0.4s ease; }
-  .rule { width: 2.5rem; height: 1px; background-color: var(--rule); margin: 2rem auto; transition: background-color 0.4s ease; }
+  .strategy { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: clamp(2rem, 4.8vw, 3.2rem); line-height: 1.16; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; transition: color 0.4s ease; }
+  .rule { width: 2.5rem; height: 1px; background-color: color-mix(in oklab, var(--accent) 55%, transparent); margin: 2rem auto; transition: background-color 0.4s ease; }
   .count { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--faint); font-variant-numeric: tabular-nums; transition: color 0.4s ease; }
 
   /* Card actions (share / add) */
   .actions { position: relative; margin-top: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
   .link-btn { background: none; border: none; cursor: pointer; font-family: var(--sans); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); transition: color 0.2s ease; padding: 0.2rem 0; }
-  .link-btn:hover { color: var(--ink); }
+  .link-btn:hover { color: var(--accent); }
   .dot { color: var(--ghost); font-size: 0.7rem; }
 
   /* Share popover */
@@ -157,7 +169,7 @@
   /* Footer colophon */
   footer { padding: 1.5rem; text-align: center; font-size: 0.72rem; line-height: 1.9; letter-spacing: 0.02em; color: var(--faint); transition: color 0.4s ease; }
   footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; transition: color 0.2s ease, border-color 0.2s ease; }
-  footer a:hover { color: var(--ink); border-color: var(--muted); }
+  footer a:hover { color: var(--accent); border-color: var(--accent); }
 
   /* Toast */
   .toast {
