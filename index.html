@@ -156,6 +156,40 @@
   footer { padding: 1.5rem; text-align: center; font-size: 0.72rem; line-height: 1.9; letter-spacing: 0.02em; color: var(--faint); transition: color 0.4s ease; }
   footer a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; transition: color 0.2s ease, border-color 0.2s ease; }
   footer a:hover { color: var(--accent); border-color: var(--accent); }
+  .about-link {
+    background: none; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--faint); padding: 0.2rem 0;
+    transition: color 0.2s ease;
+  }
+  .about-link:hover { color: var(--accent); border-color: var(--accent); }
+  .about-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
+
+  /* About dialog */
+  .modal {
+    position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 1.5rem;
+    background: color-mix(in oklab, var(--ink) 42%, transparent);
+    opacity: 0; visibility: hidden; transition: opacity 0.28s ease, visibility 0.28s;
+  }
+  .modal.open { opacity: 1; visibility: visible; }
+  .modal[hidden] { display: none; }
+  .modal-panel {
+    position: relative; max-width: 30rem; width: 100%; text-align: left;
+    background: var(--pop-bg); border: 1px solid var(--rule); border-radius: 0.9rem;
+    padding: 2.75rem 2.25rem 2.25rem; box-shadow: 0 30px 60px rgba(0,0,0,0.22);
+    transform: translateY(0.6rem) scale(0.985); transition: transform 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  .modal.open .modal-panel { transform: none; }
+  .modal-title { font-family: var(--serif); font-style: italic; font-weight: 600; font-size: 2rem; line-height: 1; color: var(--ink); margin-bottom: 1.1rem; }
+  .modal-panel p { font-family: var(--sans); font-size: 0.95rem; line-height: 1.7; color: var(--muted); margin-bottom: 1rem; }
+  .modal-panel p:last-child { margin-bottom: 0; }
+  .modal-colophon { margin-top: 1.6rem; font-size: 0.78rem; line-height: 1.9; color: var(--faint); }
+  .modal-colophon a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; transition: color 0.2s ease, border-color 0.2s ease; }
+  .modal-colophon a:hover { color: var(--accent); border-color: var(--accent); }
+  .modal-close { position: absolute; top: 0.9rem; right: 0.9rem; background: none; border: none; cursor: pointer; color: var(--faint); padding: 0.35rem; display: inline-flex; transition: color 0.2s ease; }
+  .modal-close:hover { color: var(--accent); }
+  .modal-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .modal-close svg { width: 1.15rem; height: 1.15rem; }
 
   /* Toast */
   .toast {
@@ -167,7 +201,7 @@
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @media (prefers-reduced-motion: reduce) {
-    .plate, .text-btn svg, body, .mark, .strategy, .rule, footer, .chip, .popover, .toast, .link-btn, .brand-name .tld { transition: none; }
+    .plate, .text-btn svg, body, .mark, .strategy, .rule, footer, .chip, .popover, .toast, .link-btn, .brand-name .tld, .modal, .modal-panel { transition: none; }
   }
 </style>
 </head>
@@ -237,9 +271,24 @@
   </main>
 
   <footer>
-    Inspired by Brian Eno and Peter Schmidt<br>
-    Built with love by <a href="https://mattrutherford.co.uk" target="_blank" rel="noopener">Matt Rutherford</a>
+    <button class="about-link" id="about-open" type="button" aria-haspopup="dialog">About</button>
   </footer>
+
+  <!-- About dialog -->
+  <div class="modal" id="about" role="dialog" aria-modal="true" aria-labelledby="about-title" hidden>
+    <div class="modal-panel">
+      <button class="modal-close" id="about-close" type="button" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <h2 class="modal-title" id="about-title">oblique.cards</h2>
+      <p>A single prompt for the moments when work or life has quietly stalled.</p>
+      <p>Each card is a lens, not an instruction. It will not tell you what to do. It shifts the angle you are looking from, so the thing you are stuck on has somewhere to move. Draw one, sit with it, and share it if it lands.</p>
+      <p class="modal-colophon">
+        Inspired by Brian Eno and Peter Schmidt<br><br>
+        Built with &#128420; by <a href="https://mattrutherford.co.uk" target="_blank" rel="noopener">Matt Rutherford</a>
+      </p>
+    </div>
+  </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -280,6 +329,7 @@
     const strategyEl = el("strategy"), plateEl = el("plate");
     const stageEl = el("stage"), drawBtn = el("draw"), themeBtn = el("theme"), themeIcon = el("theme-icon");
     const shareBtn = el("share"), popover = el("popover"), toastEl = el("toast");
+    const aboutModal = el("about"), aboutOpen = el("about-open"), aboutClose = el("about-close");
     const root = document.documentElement;
 
     // ---- Theme (persisted) ----
@@ -379,13 +429,32 @@
       });
     });
 
+    // ---- About dialog ----
+    let aboutTimer;
+    function openAbout(){
+      closePopover();
+      clearTimeout(aboutTimer);
+      aboutModal.hidden = false;
+      requestAnimationFrame(() => aboutModal.classList.add("open"));
+      aboutClose.focus();
+    }
+    function closeAbout(){
+      if (aboutModal.hidden) return;
+      aboutModal.classList.remove("open");
+      aboutTimer = setTimeout(() => { aboutModal.hidden = true; }, 300);
+      aboutOpen.focus();
+    }
+    aboutOpen.addEventListener("click", (e) => { e.stopPropagation(); openAbout(); });
+    aboutClose.addEventListener("click", (e) => { e.stopPropagation(); closeAbout(); });
+    aboutModal.addEventListener("click", (e) => { if (e.target === aboutModal) closeAbout(); });
+
     // ---- Global interactions ----
     stageEl.addEventListener("click", () => draw());
     drawBtn.addEventListener("click", (e) => { e.stopPropagation(); draw(); });
     document.addEventListener("click", (e) => { if (!e.target.closest(".actions")) closePopover(); });
     document.addEventListener("keydown", (e) => {
       const tag = document.activeElement && document.activeElement.tagName;
-      if (e.key === "Escape"){ closePopover(); return; }
+      if (e.key === "Escape"){ closePopover(); closeAbout(); return; }
       if (tag === "TEXTAREA" || tag === "INPUT" || tag === "BUTTON") return;
       if (e.key === " " || e.key === "Enter"){ e.preventDefault(); draw(); }
     });
