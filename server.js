@@ -112,6 +112,14 @@ const server = http.createServer((req, res) => {
     res.end(body);
   };
 
+  // www is not canonical: 301 to the bare domain, preserving path and query.
+  // SITE is the destination everything (og tags, canonical link, share URLs)
+  // already points at.
+  const host = (req.headers.host || '').toLowerCase();
+  if (/^www\./.test(host)) {
+    return send(301, { 'Location': SITE + (req.url || '/'), 'Cache-Control': 'no-store' });
+  }
+
   // Health check for Coolify
   if (pathname === '/healthz') {
     return send(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }, 'ok');
