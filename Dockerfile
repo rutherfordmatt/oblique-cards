@@ -5,6 +5,8 @@ WORKDIR /app
 
 # No dependencies to install; copy the app and its assets.
 COPY package.json server.js index.html cards.txt og.png robots.txt ./
+COPY favicon.ico favicon.svg favicon-32.png apple-touch-icon.png icon-192.png icon-512.png ./
+COPY kit/brand-tokens.css ./kit/
 
 ENV NODE_ENV=production
 ENV PORT=3000

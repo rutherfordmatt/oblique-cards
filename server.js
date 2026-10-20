@@ -80,7 +80,14 @@ function renderDocument(nParam) {
 const STATIC = {
   '/cards.txt': { type: 'text/plain; charset=utf-8', cache: 'no-cache' },
   '/og.png':    { type: 'image/png', cache: 'public, max-age=86400' },
-  '/robots.txt':{ type: 'text/plain; charset=utf-8', cache: 'public, max-age=86400' }
+  '/robots.txt':{ type: 'text/plain; charset=utf-8', cache: 'public, max-age=86400' },
+  '/kit/brand-tokens.css': { type: 'text/css; charset=utf-8', cache: 'public, max-age=86400' },
+  '/favicon.ico':          { type: 'image/x-icon', cache: 'public, max-age=86400' },
+  '/favicon.svg':          { type: 'image/svg+xml', cache: 'public, max-age=86400' },
+  '/favicon-32.png':       { type: 'image/png', cache: 'public, max-age=86400' },
+  '/apple-touch-icon.png': { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icon-192.png':         { type: 'image/png', cache: 'public, max-age=86400' },
+  '/icon-512.png':         { type: 'image/png', cache: 'public, max-age=86400' }
 };
 
 function baseHeaders(extra) {
@@ -123,11 +130,6 @@ const server = http.createServer((req, res) => {
   // Health check for Coolify
   if (pathname === '/healthz') {
     return send(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' }, 'ok');
-  }
-
-  // Favicon is an inline data URI in the HTML; answer the browser's probe quietly.
-  if (pathname === '/favicon.ico') {
-    return send(204, { 'Cache-Control': 'public, max-age=86400' });
   }
 
   // The app document

@@ -9,6 +9,8 @@ gives every shared card its own social preview.
   fallback so it never looks broken.
 - `cards.txt` — the deck, one card per line. This is the only file you edit to change cards.
 - `og.png` — the social preview image (1200x630).
+- `kit/brand-tokens.css` — shared brand tokens (`--mr-*`), copied verbatim from the brand kit.
+- `favicon.*`, `apple-touch-icon.png`, `icon-*.png` — favicons from the brand kit.
 - `server.js` — zero-dependency Node server. Serves the files and rewrites the preview
   tags per card for `/?n=` links.
 - `package.json` — for the Nixpacks build path (`npm start`).
